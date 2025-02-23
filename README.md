@@ -36,8 +36,8 @@ logging.level.org.springframework.security=DEBUG
 
 # Configuración de la base de datos PostgreSQL
 spring.datasource.url=jdbc:postgresql://localhost:5432/auth-service
-spring.datasource.username=postgres
-spring.datasource.password=12345678
+spring.datasource.username=usuarioDatBase
+spring.datasource.password=contraseña
 spring.datasource.driver-class-name=org.postgresql.Driver
 
 # Configuración de JPA
