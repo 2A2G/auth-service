@@ -13,7 +13,7 @@ public class User {
     private Long id;
 
     @NotBlank(message = "El nombre de usuario no puede estar vacío")
-    @Column(name = "username", nullable = false, unique = true)
+    @Column(name = "username", nullable = false)
     private String username;
 
     @NotBlank(message = "El email no puede estar vacío")

@@ -1,7 +1,7 @@
 package com.authservice.auth_service.service;
 
+import com.authservice.auth_service.config.Jwt.JwtConfig;
 import com.authservice.auth_service.entity.User;
-import com.authservice.auth_service.repository.RoleRepository;
 import com.authservice.auth_service.request.LoginRequest;
 import com.authservice.auth_service.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,31 +12,47 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
-    private final RoleRepository roleRepository;
+    private final JwtConfig jwtConfig;
 
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder encoder, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder encoder, JwtConfig jwtConfig) {
         this.userRepository = userRepository;
         this.encoder = encoder;
-        this.roleRepository = roleRepository;
+        this.jwtConfig = jwtConfig;
     }
 
     public String accessLogin(LoginRequest user) {
+        if (user.getEmail() == null || user.getEmail().isBlank()) {
+            throw new IllegalArgumentException("El email no puede estar vacío");
+        }
+
+        if (user.getPassword() == null || user.getPassword().isBlank()) {
+            throw new IllegalArgumentException("La contraseña no puede estar vacía");
+        }
+
+        System.out.println("Buscando usuario con email: " + user.getEmail());
+
         User foundUser = userRepository.findByEmail(user.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        System.out.println("Usuario encontrado: " + foundUser.getEmail());
 
         if (!encoder.matches(user.getPassword(), foundUser.getPassword())) {
             throw new IllegalArgumentException("Contraseña incorrecta");
         }
 
-        return foundUser.getRole().getName_rol();
+        if (foundUser.getRole() == null) {
+            throw new IllegalArgumentException("El usuario no tiene un rol asignado.");
+        }
+
+        return jwtConfig.generateToken(foundUser);
     }
+
 
     public String newUser(final User user) {
         try {
-            userRepository.findByEmail(user.getEmail())
-                    .ifPresent(existingUser -> {
-                        throw new IllegalArgumentException("El correo electrónico ya está registrado.");
-                    });
+            userRepository.findByEmail(user.getEmail()).ifPresent(existingUser -> {
+                throw new IllegalArgumentException("El correo electrónico ya está registrado.");
+            });
 
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             user.setPassword(encoder.encode(user.getPassword()));

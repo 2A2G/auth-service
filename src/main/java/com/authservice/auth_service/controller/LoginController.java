@@ -24,16 +24,18 @@ public class LoginController {
     public ResponseEntity<?> accessLogin(@RequestBody LoginRequest user) {
         try {
             String token = userService.accessLogin(user);
-            return ResponseEntity.ok(token);
+            return ResponseEntity.ok().body("{\"token\": \"" + token + "\"}");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error inesperado al procesar el login");
+                    .body("Error inesperado al procesar el login: " + e.getMessage());
         }
     }
 
-    @PostMapping("/registry")
+
+    @PostMapping("/sign-up")
     public ResponseEntity<?> register(@RequestBody User user) {
         try {
             String message = userService.newUser(user);
