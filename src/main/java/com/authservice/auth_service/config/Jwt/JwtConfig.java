@@ -1,5 +1,6 @@
 package com.authservice.auth_service.config.Jwt;
 
+import com.authservice.auth_service.config.JwtBlacklistService;
 import com.authservice.auth_service.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -22,6 +23,9 @@ public class JwtConfig {
     @Value("${jwt.expiration}")
     private Long expirationTime;
 
+    private final JwtBlacklistService jwtBlacklistService;
+
+
     public String generateToken(User user) {
         Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
         if (user.getRole() == null) {
@@ -36,21 +40,4 @@ public class JwtConfig {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
-
-    public boolean validateToken(String token) {
-        try {
-            SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
-        }
-    }
-
-    public String getEmailFromToken(String token) {
-        SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token)
-                .getBody().getSubject();
-    }
-
 }
