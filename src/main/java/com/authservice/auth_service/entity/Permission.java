@@ -18,7 +18,4 @@ public class Permission {
     @NotBlank(message = "El nombre del permiso no puede estar vacío")
     @Column(name = "name_permission", nullable = false)
     private String name_permission;
-
-    @ManyToMany(mappedBy = "permissions")
-    private Set<Role> role = new HashSet<>();
 }

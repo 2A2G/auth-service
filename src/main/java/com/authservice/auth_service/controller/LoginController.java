@@ -67,6 +67,4 @@ public class LoginController {
                     .body("Error inesperado al hacer logout");
         }
     }
-
-
 }
