@@ -5,8 +5,6 @@ import com.authservice.auth_service.repository.PermissionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class PermissionService {
@@ -21,8 +19,8 @@ public class PermissionService {
             permissionRepository.save(permission);
             return permission;
         } catch (Exception e) {
-            System.err.println("Error al crear permiso: " + e.getMessage());
-            throw new IllegalArgumentException("Error al registrar permiso. Inténtalo de nuevo más tarde.");
+            System.err.println("Error creating permission: " + e.getMessage());
+            throw new IllegalArgumentException("Error registering permission. Please try again later.");
         }
     }
 
@@ -30,10 +28,8 @@ public class PermissionService {
         try {
             return permissionRepository.findAll();
         } catch (Exception e) {
-            System.err.println("Error al obtener los permisos: " + e.getMessage());
-            throw new IllegalArgumentException("Error al obtener los permisos.");
+            System.err.println("Error retrieving permissions: " + e.getMessage());
+            throw new IllegalArgumentException("Error retrieving permissions.");
         }
     }
-
-
 }

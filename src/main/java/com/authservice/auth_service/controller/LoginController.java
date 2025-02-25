@@ -32,12 +32,11 @@ public class LoginController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
-            //e.printStackTrace();
+            // e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error inesperado al procesar el login: " + e.getMessage());
+                    .body("Unexpected error while processing login: " + e.getMessage());
         }
     }
-
 
     @PostMapping("/sign-up")
     public ResponseEntity<?> register(@RequestBody User user) {
@@ -48,23 +47,25 @@ public class LoginController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error inesperado al registrar el usuario");
+                    .body("Unexpected error while registering the user.");
         }
     }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(String token) {
         try {
-            if (!(token == null)) {
+            if (token != null) {
                 return userService.logout(token);
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error inesperado al logout. Falta el Token");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Unexpected error while logging out. Token is missing.");
             }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error inesperado al hacer logout");
+                    .body("Unexpected error while logging out.");
         }
     }
+
 }
