@@ -18,8 +18,8 @@ public class RoleService {
         try {
             return roleRepository.findAll();
         } catch (Exception e) {
-            System.err.println("Error al obtener los roles: " + e.getMessage());
-            throw new IllegalArgumentException("Error al obtener los roles.");
+            System.err.println("Error retrieving roles: " + e.getMessage());
+            throw new IllegalArgumentException("Error retrieving roles.");
         }
     }
 
@@ -28,11 +28,10 @@ public class RoleService {
             roleRepository.save(role);
             return role;
         } catch (Exception e) {
-            System.err.println("Error al crear el rol: " + e.getMessage());
-            throw new IllegalArgumentException("Error al registrar rol. Inténtalo de nuevo más tarde.");
+            System.err.println("Error creating role: " + e.getMessage());
+            throw new IllegalArgumentException("Error registering role. Please try again later.");
         }
     }
-
 
 
 }
