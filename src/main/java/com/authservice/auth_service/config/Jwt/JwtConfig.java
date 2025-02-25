@@ -34,7 +34,7 @@ public class JwtConfig {
 
         return Jwts.builder()
                 .setSubject(user.getEmail())
-                .claim("role", user.getRole().getName_rol())
+                .claim("permission", user.getRole().getPermissions().toString())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(key, SignatureAlgorithm.HS256)
