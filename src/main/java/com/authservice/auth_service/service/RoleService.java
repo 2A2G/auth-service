@@ -14,7 +14,7 @@ public class RoleService {
         this.roleRepository = roleRepository;
     }
 
-    public List<Role> getRole() {
+    public List<Role> view() {
         try {
             return roleRepository.findAll();
         } catch (Exception e) {
@@ -22,5 +22,17 @@ public class RoleService {
             throw new IllegalArgumentException("Error al obtener los roles.");
         }
     }
+
+    public Object create(Role role) {
+        try {
+            roleRepository.save(role);
+            return role;
+        } catch (Exception e) {
+            System.err.println("Error al crear el rol: " + e.getMessage());
+            throw new IllegalArgumentException("Error al registrar rol. Inténtalo de nuevo más tarde.");
+        }
+    }
+
+
 
 }
