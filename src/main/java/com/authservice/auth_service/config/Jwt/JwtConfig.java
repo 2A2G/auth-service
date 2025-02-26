@@ -40,4 +40,37 @@ public class JwtConfig {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
+
+    public String getUsernameFromToken(String token) {
+        try {
+            SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            return claims.getSubject();
+        } catch (JwtException e) {
+            System.out.println("Error parsing token: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+            return !jwtBlacklistService.isTokenBlacklisted(token);
+        } catch (JwtException | IllegalArgumentException e) {
+            System.out.println("Error validating token: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
