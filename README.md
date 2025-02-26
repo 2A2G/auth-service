@@ -108,5 +108,9 @@ Puedes usar Docker Compose para desplegar el servicio junto con la base de datos
 
 ## Licencia
 
-Todos los derechos reservados © [2A2G](https://github.com/2A2G). Este repositorio es de uso privado y no se permite su distribución sin autorización.
 
+Este proyecto está bajo la **Licencia MIT**.
+
+© 2025 [2A2G](https://github.com/2A2G).
+
+Se permite el uso, modificación y distribución de este software de forma gratuita, siempre que se conserve este aviso de licencia.
