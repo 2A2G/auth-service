@@ -1,6 +1,7 @@
 package com.authservice.auth_service.config.Jwt;
 
 import com.authservice.auth_service.config.JwtBlacklistService;
+import com.authservice.auth_service.entity.Permission;
 import com.authservice.auth_service.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -12,6 +13,7 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @Configuration
 @Data
@@ -34,10 +36,46 @@ public class JwtConfig {
 
         return Jwts.builder()
                 .setSubject(user.getEmail())
-                .claim("permission", user.getRole().getPermissions().toString())
+                .claim("permissions", user.getRole().getPermissions()
+                        .stream()
+                        .map(Permission::getName_permission)
+                        .collect(Collectors.toList()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
+
+    public String getUsernameFromToken(String token) {
+        try {
+            SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            return claims.getSubject();
+        } catch (JwtException e) {
+            System.out.println("Error parsing token: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+            return !jwtBlacklistService.isTokenBlacklisted(token);
+        } catch (JwtException | IllegalArgumentException e) {
+            System.out.println("Error validating token: " + e.getMessage());
+            //  e.printStackTrace();
+            return false;
+        }
+    }
+
 }

@@ -55,4 +55,18 @@ public class JwtBlacklistService {
                     .body("Error al agregar a la blacklist: " + e.getMessage());
         }
     }
+
+    public boolean isTokenBlacklisted(String token) {
+        try {
+            if (blacklistedTokens.contains(token)) {
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            System.out.println("Error al verificar blacklist: " + e.getMessage());
+            return false;
+        }
+    }
+
+
 }

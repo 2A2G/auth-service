@@ -1,9 +1,11 @@
 package com.authservice.auth_service.controller;
 
+import com.authservice.auth_service.config.Jwt.JwtConfig;
 import com.authservice.auth_service.config.JwtBlacklistService;
 import com.authservice.auth_service.entity.User;
 import com.authservice.auth_service.request.LoginRequest;
 import com.authservice.auth_service.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,15 +14,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api-auth")
 public class LoginController {
-
-    @Autowired
     private final UserService userService;
-    @Autowired
-    private final JwtBlacklistService jwtBlacklistService;
+    private final JwtConfig jwtConfig;
 
-    public LoginController(UserService userService, JwtBlacklistService jwtBlacklistService) {
+    public LoginController(UserService userService, JwtConfig jwtConfig) {
         this.userService = userService;
-        this.jwtBlacklistService = jwtBlacklistService;
+        this.jwtConfig = jwtConfig;
     }
 
 
@@ -52,10 +51,17 @@ public class LoginController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(String token) {
+    public ResponseEntity<?> logout(HttpServletRequest request) {
         try {
-            if (token != null) {
-                return userService.logout(token);
+            String authorizationHeader = request.getHeader("Authorization");
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                String token = authorizationHeader.substring(7);
+                if (jwtConfig.validateToken(token)) {
+                    userService.logout(token);
+                    return ResponseEntity.status(HttpStatus.OK).body("Successfully logged out.");
+                } else {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+                }
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Unexpected error while logging out. Token is missing.");
