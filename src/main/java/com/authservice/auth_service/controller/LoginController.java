@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api-auth")
+//@RequestMapping("/api-auth")
 public class LoginController {
     private final UserService userService;
     private final JwtConfig jwtConfig;
@@ -23,7 +23,7 @@ public class LoginController {
     }
 
 
-    @PostMapping("/login")
+    @PostMapping("/api-auth/login")
     public ResponseEntity<?> accessLogin(@RequestBody LoginRequest user) {
         try {
             String token = userService.accessLogin(user);
@@ -37,7 +37,7 @@ public class LoginController {
         }
     }
 
-    @PostMapping("/sign-up")
+    @PostMapping("/api-auth/sign-up")
     public ResponseEntity<?> register(@RequestBody User user) {
         try {
             String message = userService.newUser(user);
@@ -50,7 +50,7 @@ public class LoginController {
         }
     }
 
-    @PostMapping("/logout")
+    @PostMapping("api-serve/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
         try {
             String authorizationHeader = request.getHeader("Authorization");

@@ -30,7 +30,7 @@ public class RoleController {
         }
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<List<Role>> getRoles() {
         try {
             List<Role> roles = roleService.view();
