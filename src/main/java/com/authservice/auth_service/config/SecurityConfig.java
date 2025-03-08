@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Value("${jwt.sec|ret}")
+    @Value("${jwt.secret}")
     private String secretKey;
 
     @Bean
